@@ -6,6 +6,11 @@
     "scripts": {
       "bot": "nodemon bot.js"
     },
+    "dependencies": {
+      "discordie": ">=0.0.0",
+      "log4js": ">=0.0.0"
+    },
     "author": "Matt Burchett",
     "license": "MIT"
 }
+
