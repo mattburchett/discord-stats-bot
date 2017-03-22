@@ -1,6 +1,11 @@
-var Discordie = require('discordie'); // Requite Discord Libraries
-var log4js = require('log4js'); // Require log4js for logging to files
-var config = require('./config.json'); // require custom settings
+ // Require Discord Libraries
+var Discordie = require('discordie');
+
+ // Require log4js for logging to files
+var log4js = require('log4js');
+
+// require custom settings
+var config = require('./config.json');
 
 // Configure log4js
 log4js.configure({
@@ -12,21 +17,32 @@ log4js.configure({
   ]
 });
 
+// begin discord bot
 const Events = Discordie.Events;
 const client = new Discordie();
 
+// issue connect to discord using the bot_token in config.json
 client.connect({
   token: config.bot_token
 });
 
+// once connected
 client.Dispatcher.on(Events.GATEWAY_READY, e => {
+    // set some variables for log4js
     var logcon = log4js.getLogger('console');
     var actcon = log4js.getLogger('activeusers');
+
+    // acknoledge connection to console logs
     logcon.info('Connected as: ' + client.User.username);
+    // check for the number of active users every 30 seconds and log to the active users logs
     setInterval(function() {actcon.info(config.guild_name + " Active Users: " + client.Users.onlineMembersForGuild(config.guild_id).length);}, 30000)
 });
 
+// when messages are created
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
+  // set some variables for log4js
   var chancon = log4js.getLogger('channels');
+
+  // log the guild name, the channel name, the username, and the message to the channels log
   chancon.info(e.message.guild.name + ":" + " #" + e.message.channel.name + ": " + "<" + e.message.displayUsername + ">: "+ e.message.content);
 });
