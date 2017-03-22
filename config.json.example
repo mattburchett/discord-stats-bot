@@ -1,0 +1,5 @@
+{
+  "bot_token": "<Your discord bot token>",
+  "guild_id": "<Your Channel ID - Enable Developer Tools in Discord, right click on the server, copy id>",
+  "guild_name": "<This is just for the log files, I named mine the name of the server>"
+}

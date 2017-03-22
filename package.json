@@ -1,0 +1,11 @@
+{
+    "name": "discord-stats-bot",
+    "version": "1.0.0",
+    "description": "Discord Stats Bot (for exporting into ELK or other centralized logging)",
+    "main": "bot.js",
+    "scripts": {
+      "bot": "nodemon bot.js"
+    },
+    "author": "Matt Burchett",
+    "license": "MIT"
+}
