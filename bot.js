@@ -35,7 +35,9 @@ client.Dispatcher.on(Events.GATEWAY_READY, e => {
     // acknoledge connection to console logs
     logcon.info('Connected as: ' + client.User.username);
     // check for the number of active users every 30 seconds and log to the active users logs
-    setInterval(function() {actcon.info(config.guild_name + " Active Users: " + client.Users.onlineMembersForGuild(config.guild_id).length);}, 30000)
+    setInterval(function() {
+      client.Users.fetchMembers(config.guild_id);
+      actcon.info(config.guild_name + " Active Users: " + client.Users.onlineMembersForGuild(config.guild_id).length);}, 30000)
 });
 
 // when messages are created
