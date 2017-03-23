@@ -48,3 +48,20 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   // log the guild name, the channel name, the username, and the message to the channels log
   chancon.info(e.message.guild.name + ":" + " #" + e.message.channel.name + ": " + "<" + e.message.displayUsername + ">: "+ e.message.content);
 });
+
+// if connection is lost to Discord, issue a reconnect.
+
+client.Dispatcher.on(Events.DISCONNECTED, e => {
+  // set some variables for log4js
+  var logcon = log4js.getLogger('console');
+
+  // force disconnection to Discord
+  client.disconnect();
+  logcon.info('Disconnected from server ...');
+
+  // reconnect to Discord
+  logcon.info('Reconnecting to Discord ... ');
+  client.connect({
+    token: config.bot_token
+  });
+});
