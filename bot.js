@@ -17,6 +17,11 @@ log4js.configure({
   ]
 });
 
+// set constant log4js variables
+const logcon = log4js.getLogger('console');
+const actcon = log4js.getLogger('activeusers');
+const chancon = log4js.getLogger('channels');
+
 // begin discord bot
 const Events = Discordie.Events;
 const client = new Discordie();
@@ -28,10 +33,6 @@ client.connect({
 
 // once connected
 client.Dispatcher.on(Events.GATEWAY_READY, e => {
-    // set some variables for log4js
-    var logcon = log4js.getLogger('console');
-    var actcon = log4js.getLogger('activeusers');
-
     // acknoledge connection to console logs
     logcon.info('Connected as: ' + client.User.username);
     // check for the number of active users every 30 seconds and log to the active users logs
@@ -42,9 +43,6 @@ client.Dispatcher.on(Events.GATEWAY_READY, e => {
 
 // when messages are created
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
-  // set some variables for log4js
-  var chancon = log4js.getLogger('channels');
-
   // log the guild name, the channel name, the username, and the message to the channels log
   chancon.info(e.message.guild.name + ":" + " #" + e.message.channel.name + ": " + "<" + e.message.displayUsername + ">: "+ e.message.content);
 });
@@ -52,9 +50,6 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
 // if connection is lost to Discord, issue a reconnect.
 
 client.Dispatcher.on(Events.DISCONNECTED, e => {
-  // set some variables for log4js
-  var logcon = log4js.getLogger('console');
-
   // force disconnection to Discord
   client.disconnect();
   logcon.info('Disconnected from server ...');
@@ -65,3 +60,13 @@ client.Dispatcher.on(Events.DISCONNECTED, e => {
     token: config.bot_token
   });
 });
+
+// also, reconnect the bot hourly.
+
+setInterval(function() {
+  logcon.info('Reconnecting to server per timeout of ' + config.reconnect + 'ms.');
+  client.disconnect();
+  client.connect({
+    token: config.bot_token
+  });
+}, config.reconnect);
