@@ -1,7 +1,7 @@
- // Require Discord Libraries
+// Require Discord Libraries
 var Discordie = require('discordie');
 
- // Require log4js for logging to files
+// Require log4js for logging to files
 var log4js = require('log4js');
 
 // require custom settings
@@ -33,40 +33,42 @@ client.connect({
 
 // once connected
 client.Dispatcher.on(Events.GATEWAY_READY, e => {
-    // acknoledge connection to console logs
-    logcon.info('Connected as: ' + client.User.username);
-    // check for the number of active users every 30 seconds and log to the active users logs
-    setInterval(function() {
-      client.Users.fetchMembers(config.guild_id);
-      actcon.info(config.guild_name + " Active Users: " + client.Users.onlineMembersForGuild(config.guild_id).length);}, 30000)
+  // acknoledge connection to console logs
+  logcon.info('Connected as: ' + client.User.username);
 });
 
-// when messages are created
-client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
-  // log the guild name, the channel name, the username, and the message to the channels log
-  chancon.info(e.message.guild.name + ":" + " #" + e.message.channel.name + ": " + "<" + e.message.displayUsername + ">: "+ e.message.content);
-});
-
-// if connection is lost to Discord, issue a reconnect.
-
-client.Dispatcher.on(Events.DISCONNECTED, e => {
-  // force disconnection to Discord
-  client.disconnect();
-  logcon.info('Disconnected from server ...');
-
-  // reconnect to Discord
-  logcon.info('Reconnecting to Discord ... ');
-  client.connect({
-    token: config.bot_token
-  });
-});
-
-// also, reconnect the bot hourly.
-
+// check for the number of active users every 30 seconds and log to the active users logs
 setInterval(function() {
-  logcon.info('Reconnecting to server per timeout of ' + config.reconnect + 'ms.');
-  client.disconnect();
-  client.connect({
-    token: config.bot_token
+  client.Users.fetchMembers(config.guild_id);
+  actcon.info(config.guild_name + " Active Users: " + client.Users.onlineMembersForGuild(config.guild_id).length);}, 30000);
+
+  // when messages are created
+  client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
+    // log the guild name, the channel name, the username, and the message to the channels log and disable DMs.
+    if (!e.message.isPrivate)
+    chancon.info(e.message.guild.name + ":" + " #" + e.message.channel.name + ": " + "<" + e.message.displayUsername + ">: "+ e.message.content);
   });
-}, config.reconnect);
+
+  // if connection is lost to Discord, issue a reconnect.
+
+  client.Dispatcher.on(Events.DISCONNECTED, e => {
+    // force disconnection to Discord
+    client.disconnect();
+    logcon.info('Disconnected from server ...');
+
+    // reconnect to Discord
+    logcon.info('Reconnecting to Discord ... ');
+    client.connect({
+      token: config.bot_token
+    });
+  });
+
+  // also, reconnect the bot hourly.
+
+  setInterval(function() {
+    logcon.info('Reconnecting to server per timeout of ' + config.reconnect + 'ms.');
+    client.disconnect();
+    client.connect({
+      token: config.bot_token
+    });
+  }, config.reconnect);
